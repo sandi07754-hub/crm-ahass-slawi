@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CRM AHASS Slawi II</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <section id="authScreen" class="auth-screen hidden" aria-labelledby="authTitle">
+        <form id="authForm" class="auth-card">
+            <div class="auth-logo">🔐</div>
+            <h1 id="authTitle">Login CRM AHASS</h1>
+            <p id="authDescription">Masuk untuk mengakses dashboard dan data customer.</p>
+            <label for="authUsername">Username</label>
+            <input id="authUsername" name="username" autocomplete="username" required minlength="3">
+            <label for="authPassword">Password</label>
+            <input id="authPassword" name="password" type="password" autocomplete="current-password" required minlength="12">
+            <button id="authSubmit" class="btn btn-primary" type="submit">Masuk</button>
+            <p id="authMessage" class="auth-message" role="status" aria-live="polite"></p>
+        </form>
+    </section>
+
+    <!-- =========================
+         SIDEBAR / MENU
+    ========================== -->
+    <aside class="sidebar">
+
+        <div class="logo-area">
+            <h2>CRM AHASS</h2>
+            <p>Slawi II</p>
+        </div>
+
+        <nav class="menu">
+
+            <button type="button" class="menu-item active"
+                onclick="showPage('dashboard')">
+                📊 Dashboard
+            </button>
+
+            <button type="button" class="menu-item"
+                onclick="showPage('customer')">
+                👥 Customer
+            </button>
+
+            <button type="button" class="menu-item"
+                onclick="showPage('segmentasi')">
+                🎯 Segmentasi
+            </button>
+
+            <button type="button" class="menu-item"
+                onclick="showPage('campaign')">
+                📢 Campaign
+            </button>
+
+            <button type="button" class="menu-item"
+                onclick="showPage('template')">
+                📝 Template Pesan
+            </button>
+
+            <button type="button" class="menu-item"
+                onclick="showPage('followup')">
+                📞 Follow-up
+            </button>
+
+            <button type="button" class="menu-item"
+                onclick="showPage('log')">
+                📋 Log Pesan
+            </button>
+
+        </nav>
+
+        <div class="sidebar-footer">
+            <small>
+                CRM AHASS V1<br>
+                Bengkel Resmi Honda AHASS SLAWI II
+            </small>
+        </div>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+    <main class="main-content">
+
+        <!-- HEADER -->
+        <header class="topbar">
+
+            <div>
+                <h1 id="page-title">Dashboard CRM</h1>
+                <p>
+                    Bengkel Resmi Honda AHASS SLAWI II
+                </p>
+            </div>
+
+            <div class="admin-info">
+                👤 <strong id="currentUsername">Admin</strong>
+                <button type="button" id="logoutButton" class="btn btn-secondary">Keluar</button>
+            </div>
+
+        </header>
+
+
+        <!-- =========================
+             DASHBOARD
+        ========================== -->
+        <section id="dashboard" class="page active">
+
+            <div class="welcome-box">
+
+                <h2>Selamat Datang di CRM AHASS 👋</h2>
+
+                <p>
+                    Kelola customer, reminder service,
+                    campaign WhatsApp dan follow-up
+                    dalam satu dashboard.
+                </p>
+
+            </div>
+
+
+            <!-- KPI -->
+            <div class="kpi-grid">
+
+                <div class="kpi-card">
+                    <span>👥</span>
+
+                    <div>
+                        <p>Total Customer</p>
+                        <h2 id="totalCustomer">0</h2>
+                    </div>
+                </div>
+
+
+                <div class="kpi-card">
+                    <span>📱</span>
+
+                    <div>
+                        <p>Opt-in WhatsApp</p>
+                        <h2 id="totalOptin">0</h2>
+                    </div>
+                </div>
+
+
+                <div class="kpi-card">
+                    <span>🔄</span>
+
+                    <div>
+                        <p>Customer Lost</p>
+                        <h2 id="totalLost">0</h2>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="reminder-kpi-grid">
+                <button class="reminder-kpi overdue" type="button" onclick="showReminderGroup('overdue')"><span>🔴 Customer Terlambat</span><strong id="reminderOverdue">0</strong></button>
+                <button class="reminder-kpi today" type="button" onclick="showReminderGroup('today')"><span>🟠 Service Hari Ini</span><strong id="reminderToday">0</strong></button>
+                <button class="reminder-kpi h3" type="button" onclick="showReminderGroup('h3')"><span>🟡 H-3</span><strong id="reminderH3">0</strong></button>
+                <button class="reminder-kpi h7" type="button" onclick="showReminderGroup('h7')"><span>🟢 H-7</span><strong id="reminderH7">0</strong></button>
+            </div>
+
+            <div class="section-card">
+                <div class="section-header">
+                    <div>
+                        <h2>📊 Laporan Follow-up</h2>
+                        <p id="followupReportPeriod">Rekap follow-up hari ini</p>
+                    </div>
+                    <div class="toolbar">
+                        <select id="followupReportMode" aria-label="Periode laporan follow-up">
+                            <option value="day">Harian</option>
+                            <option value="month">Bulanan</option>
+                            <option value="year">Tahunan</option>
+                        </select>
+                        <input id="followupReportDay" type="date" aria-label="Tanggal laporan">
+                        <input id="followupReportMonth" type="month" aria-label="Bulan laporan" hidden>
+                        <input id="followupReportYear" type="number" min="2020" max="2100" aria-label="Tahun laporan" hidden>
+                    </div>
+                </div>
+                <div class="campaign-stats">
+                    <div><span>📞</span><strong id="reportFollowupTotal">0</strong><small>Total Follow-up</small></div>
+                    <div><span>📤</span><strong id="reportFollowupSent">0</strong><small>Terkirim</small></div>
+                    <div><span>💬</span><strong id="reportFollowupResponse">0</strong><small>Respons</small></div>
+                    <div><span>🏍️</span><strong id="reportFollowupBooking">0</strong><small>Booking</small></div>
+                </div>
+            </div>
+
+            <!-- CAMPAIGN SUMMARY -->
+            <div class="section-card">
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>📢 Campaign WhatsApp</h2>
+                        <p>Ringkasan aktivitas campaign</p>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn-primary"
+                        onclick="showPage('campaign')">
+                        + Campaign Baru
+                    </button>
+
+                </div>
+
+
+                <div class="campaign-stats">
+
+                    <div>
+                        <span>📤</span>
+                        <strong id="totalSent">0</strong>
+                        <small>Terkirim</small>
+                    </div>
+
+                    <div>
+                        <span>👀</span>
+                        <strong id="totalRead">0</strong>
+                        <small>Dibaca</small>
+                    </div>
+
+                    <div>
+                        <span>💬</span>
+                        <strong id="totalResponse">0</strong>
+                        <small>Respons</small>
+                    </div>
+
+                    <div>
+                        <span>🏍️</span>
+                        <strong id="totalBooking">0</strong>
+                        <small>Booking</small>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOLLOW UP -->
+            <div class="section-card">
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>📞 Customer yang Harus Dihubungi</h2>
+                        <p>Prioritas: terlambat, hari ini, H-3, lalu H-7</p>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn-secondary"
+                        onclick="showPage('followup')">
+                        Lihat Semua
+                    </button>
+
+                </div>
+
+
+                <div id="dashboardFollowupList" class="followup-list"></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             CUSTOMER
+        ========================== -->
+        <section id="customer" class="page">
+
+            <!-- FORM CUSTOMER -->
+            <div id="customerForm" class="form-card hidden">
+
+                <div class="form-card-header">
+
+                    <div>
+                        <h3 id="customerFormTitle">
+                            Tambah Customer Baru
+                        </h3>
+
+                        <p>
+                            Masukkan data customer dan kendaraan
+                        </p>
+                    </div>
+
+                    <!-- TOMBOL TUTUP -->
+                    <button
+                        type="button"
+                        id="btnCloseCustomerForm"
+                        class="btn btn-secondary"
+                        onclick="closeCustomerForm()">
+                        Tutup
+                    </button>
+
+                </div>
+
+
+                <!-- FORM -->
+                <form id="addCustomerForm">
+
+                    <div class="form-grid">
+
+                        <!-- NAMA -->
+                        <div class="form-group">
+
+                            <label for="customerName">
+                                Nama Customer
+                            </label>
+
+                            <input
+                                type="text"
+                                id="customerName"
+                                placeholder="Contoh: Budi Santoso"
+                                required>
+
+                        </div>
+
+
+                        <!-- WHATSAPP -->
+                        <div class="form-group">
+
+                            <label for="customerPhone">
+                                No. WhatsApp
+                            </label>
+
+                            <input
+                                type="text"
+                                id="customerPhone"
+                                placeholder="628xxxxxxxxxx"
+                                required>
+
+                        </div>
+
+
+                        <!-- NO POLISI -->
+                        <div class="form-group">
+
+                            <label for="customerPlate">
+                                No. Polisi
+                            </label>
+
+                            <input
+                                type="text"
+                                id="customerPlate"
+                                placeholder="Contoh: F 1234 XX"
+                                required>
+
+                        </div>
+
+
+                        <!-- MOTOR -->
+                        <div class="form-group">
+
+                            <label for="customerMotor">
+                                Tipe Motor
+                            </label>
+
+                            <select
+                                id="customerMotor"
+                                required>
+
+                                <option value="">
+                                    Pilih Motor
+                                </option>
+
+                                <option value="Honda Beat">
+                                    Honda Beat
+                                </option>
+
+                                <option value="Honda Scoopy">
+                                    Honda Scoopy
+                                </option>
+
+                                <option value="Honda Vario 125">
+                                    Honda Vario 125
+                                </option>
+
+                                <option value="Honda Vario 160">
+                                    Honda Vario 160
+                                </option>
+
+                                <option value="Honda PCX 160">
+                                    Honda PCX 160
+                                </option>
+
+                                <option value="Honda ADV 160">
+                                    Honda ADV 160
+                                </option>
+
+                                <option value="Honda Genio">
+                                    Honda Genio
+                                </option>
+
+                                <option value="Honda Stylo 160">
+                                    Honda Stylo 160
+                                </option>
+
+                                <option value="Lainnya">
+                                    Lainnya
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- KM -->
+                        <div class="form-group">
+
+                            <label for="customerKm">
+                                Kilometer
+                            </label>
+
+                            <input
+                                type="number"
+                                id="customerKm"
+                                placeholder="Contoh: 12500"
+                                min="0"
+                                required>
+
+                        </div>
+
+
+                        <!-- SERVICE TERAKHIR -->
+                        <div class="form-group">
+
+                            <label for="lastService">
+                                Tanggal Service Terakhir
+                            </label>
+
+                            <input
+                                type="date"
+                                id="lastService"
+                                required>
+
+                        </div>
+
+
+                        <!-- SERVICE BERIKUTNYA -->
+                        <div class="form-group">
+
+                            <label for="nextService">
+                                Service Berikutnya
+                            </label>
+
+                            <input
+                                type="date"
+                                id="nextService"
+                                required>
+
+                        </div>
+
+
+                        <!-- TIPE PEKERJAAN -->
+                        <div class="form-group">
+
+                            <label for="customerKpb">
+                                Tipe Pekerjaan
+                            </label>
+
+                            <select id="customerKpb">
+
+                                <option value="">
+                                    Tidak Ada
+                                </option>
+
+                                <option value="KPB 1">
+                                    KPB 1
+                                </option>
+
+                                <option value="KPB 2">
+                                    KPB 2
+                                </option>
+
+                                <option value="KPB 3">
+                                    KPB 3
+                                </option>
+
+                                <option value="KPB 4">
+                                    KPB 4
+                                </option>
+
+                                <option value="QS (Quick Service)">
+                                    QS (Quick Service)
+                                </option>
+
+                                <option value="LR (Light Repair)">
+                                    LR (Light Repair)
+                                </option>
+
+                                <option value="HR (Heavy Repair)">
+                                    HR (Heavy Repair)
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- OPT-IN -->
+                        <div class="form-group">
+
+                            <label for="customerOptin">
+                                Opt-in WhatsApp
+                            </label>
+
+                            <select
+                                id="customerOptin"
+                                required>
+
+                                <option value="true">
+                                    Ya - Bersedia menerima WhatsApp
+                                </option>
+
+                                <option value="false">
+                                    Tidak
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- STATUS -->
+                        <div class="form-group">
+
+                            <label for="customerStatus">
+                                Status Customer
+                            </label>
+
+                            <select id="customerStatus">
+
+                                <option value="Aktif">
+                                    Aktif
+                                </option>
+
+                                <option value="Lost">
+                                    Lost
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FORM ACTION -->
+                    <div class="form-actions">
+
+                        <!-- TOMBOL BATAL -->
+                        <button
+                            type="button"
+                            id="btnCancelCustomerForm"
+                            class="btn btn-secondary"
+                            onclick="closeCustomerForm()">
+                            Batal
+                        </button>
+
+
+                        <!-- TOMBOL SIMPAN -->
+                        <button
+                            type="submit"
+                            id="btnSaveCustomer"
+                            class="btn btn-primary">
+                            💾 Simpan Customer
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- CUSTOMER PAGE HEADER -->
+            <div class="page-header">
+
+                <div>
+
+                    <h2>👥 Database Customer</h2>
+
+                    <p>
+                        Kelola data customer AHASS
+                    </p>
+
+                </div>
+
+
+                <!-- TOMBOL CUSTOMER BARU -->
+                <button
+                    type="button"
+                    id="btnOpenCustomerForm"
+                    class="btn-primary"
+                    onclick="openCustomerForm()">
+
+                    + Customer Baru
+
+                </button>
+
+            </div>
+
+            <!-- RINGKASAN CUSTOMER DAN UPLOAD XLS -->
+            <div class="customer-dashboard">
+                <div class="customer-summary-card"><span>👥</span><div><p>Total Customer</p><strong id="customerDashboardTotal">0</strong></div></div>
+                <div class="customer-summary-card"><span>✅</span><div><p>Customer Aktif</p><strong id="customerDashboardActive">0</strong></div></div>
+                <div class="customer-summary-card"><span>💬</span><div><p>Opt-in WhatsApp</p><strong id="customerDashboardOptin">0</strong></div></div>
+                <div class="customer-summary-card"><span>📅</span><div><p>Service Kembali 7 Hari</p><strong id="customerDashboardReminder">0</strong></div></div>
+            </div>
+
+            <div class="section-card customer-upload-card">
+                <div>
+                    <h3>📤 Upload Data Customer</h3>
+                    <p>Gunakan template Excel dengan kolom: No, Kode Pelanggan, Nama Pelanggan, No HP, Jenis Service, Tanggal Service, Tanggal Service Kembali, Type Motor. File .xls atau .xlsx diterima; baris pertama harus berisi nama kolom.</p>
+                </div>
+                <div class="customer-upload-controls">
+                    <input type="file" id="customerExcelFile" accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" aria-label="Pilih file Excel customer">
+                    <button type="button" class="btn btn-primary" id="btnImportCustomers">Upload Excel</button>
+                </div>
+                <p id="customerImportMessage" class="customer-import-message" role="status" aria-live="polite"></p>
+            </div>
+
+
+            <!-- CUSTOMER TABLE -->
+            <div class="section-card">
+
+                <div class="toolbar">
+
+                    <input
+                        type="text"
+                        id="searchCustomer"
+                        placeholder="🔍 Cari nama / no polisi / no WA...">
+
+
+                    <select id="filterOptin">
+
+                        <option value="">
+                            Semua Customer
+                        </option>
+
+                        <option value="ya">
+                            Opt-in WA
+                        </option>
+
+                        <option value="tidak">
+                            Tidak Opt-in
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>No</th>
+                                <th>Kode Pelanggan</th>
+                                <th>Nama Pelanggan</th>
+                                <th>No HP</th>
+                                <th>Jenis Service</th>
+                                <th>Tanggal Service</th>
+                                <th>Tanggal Service Kembali</th>
+                                <th>Type Motor</th>
+                                <th>Aksi</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="customerTable">
+
+                            <tr>
+
+                                <td
+                                    colspan="9"
+                                    class="empty-table">
+
+                                    Belum ada data customer
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             SEGMENTASI
+        ========================== -->
+        <section id="segmentasi" class="page">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h2>🎯 Segmentasi Customer</h2>
+
+                    <p>
+                        Kelompokkan customer berdasarkan kebutuhan
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="segment-grid">
+
+                <div class="segment-card">
+
+                    <span>🔧</span>
+
+                    <h3>Reminder Service</h3>
+
+                    <strong id="segmentService">0</strong>
+
+                    <p>
+                        Customer mendekati jadwal service
+                    </p>
+
+                </div>
+
+
+                <div class="segment-card">
+
+                    <span>🛢️</span>
+
+                    <h3>Reminder Oli</h3>
+
+                    <strong id="segmentOli">0</strong>
+
+                    <p>
+                        Customer membutuhkan penggantian oli
+                    </p>
+
+                </div>
+
+
+                <div class="segment-card">
+
+                    <span>📅</span>
+
+                    <h3>Tipe Pekerjaan</h3>
+
+                    <strong id="segmentKPB">0</strong>
+
+                    <p>
+                        Customer dengan tipe pekerjaan tercatat
+                    </p>
+
+                </div>
+
+
+                <div class="segment-card">
+
+                    <span>🎁</span>
+
+                    <h3>Promo</h3>
+
+                    <strong id="segmentPromo">0</strong>
+
+                    <p>
+                        Customer target promo
+                    </p>
+
+                </div>
+
+
+                <div class="segment-card">
+
+                    <span>🔄</span>
+
+                    <h3>Customer Lost</h3>
+
+                    <strong id="segmentLost">0</strong>
+
+                    <p>
+                        Customer lama tidak service
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             CAMPAIGN
+        ========================== -->
+        <section id="campaign" class="page">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h2>📢 Campaign WhatsApp</h2>
+
+                    <p>
+                        Buat campaign reminder dan promo
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-primary"
+                    id="newCampaignButton">
+
+                    + Campaign Baru
+
+                </button>
+
+            </div>
+
+
+            <div class="section-card">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>
+                            Nama Campaign
+                        </label>
+
+                        <input
+                            id="campaignName"
+                            type="text"
+                            placeholder="Contoh: Reminder Service Oktober">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Segment Customer
+                        </label>
+
+                        <select id="campaignSegment">
+
+                            <option>
+                                Reminder Service
+                            </option>
+
+                            <option>
+                                Reminder Oli
+                            </option>
+
+                            <option>
+                                KPB
+                            </option>
+
+                            <option>
+                                Promo
+                            </option>
+
+                            <option>
+                                Customer Lost
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Template Pesan
+                        </label>
+
+                        <select id="campaignTemplate">
+
+                            <option>
+                                Pilih template...
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="message-preview">
+
+                    <h3>👀 Preview Pesan</h3>
+
+                    <div class="whatsapp-preview" id="campaignPreviewText">
+
+                        <p>
+                            Halo <strong>[NAMA]</strong> 👋
+                        </p>
+
+                        <p>
+                            Kami dari
+                            <strong>AHASS SLAWI II</strong>.
+                        </p>
+
+                        <p>
+                            Motor <strong>[MOTOR]</strong>
+                            dengan nomor polisi
+                            <strong>[NO_POLISI]</strong>
+                            sudah mendekati jadwal service berikutnya.
+                        </p>
+
+                        <p>
+                            Silakan melakukan service agar
+                            kendaraan tetap dalam kondisi optimal.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="campaign-action">
+
+                    <button
+                        type="button"
+                        class="btn-secondary"
+                        id="previewCampaignButton">
+
+                        Preview
+
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-primary"
+                        id="queueCampaignButton">
+
+                        Masukkan ke Antrean
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div id="campaignList" class="section-card" style="margin-top: 20px;"></div>
+
+        </section>
+
+
+        <!-- =========================
+             TEMPLATE
+        ========================== -->
+        <section id="template" class="page">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h2>📝 Template Pesan</h2>
+
+                    <p>
+                        Kelola template WhatsApp CRM
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-primary"
+                    id="newTemplateButton">
+
+                    + Template Baru
+
+                </button>
+
+            </div>
+
+
+            <div class="section-card" id="templateForm" hidden>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="templateName">Nama Template</label>
+                        <input id="templateName" type="text" placeholder="Contoh: Reminder Service">
+                    </div>
+                    <div class="form-group">
+                        <label for="templateContent">Isi Pesan</label>
+                        <textarea id="templateContent" rows="8" placeholder="Gunakan [NAMA], [MOTOR], dan [NO_POLISI] untuk data customer."></textarea>
+                    </div>
+                </div>
+                <div class="campaign-action">
+                    <button type="button" class="btn-secondary" id="cancelTemplateButton">Batal</button>
+                    <button type="button" class="btn-primary" id="saveTemplateButton">Simpan Template</button>
+                </div>
+            </div>
+
+            <div class="section-card" id="templateList"></div>
+
+        </section>
+
+
+        <!-- =========================
+             FOLLOW UP
+        ========================== -->
+        <section id="followup" class="page">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h2>📞 Follow-up Customer</h2>
+
+                    <p>
+                        Monitoring customer yang perlu dihubungi
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="section-card">
+                <div class="toolbar">
+                    <select id="followupStatusFilter" aria-label="Filter status reminder">
+                        <option value="due">Harus dihubungi (terlambat & hari ini)</option>
+                        <option value="all">Semua reminder sampai H-7</option>
+                        <option value="overdue">Terlambat</option>
+                        <option value="today">Hari ini</option>
+                        <option value="h3">H-3</option>
+                        <option value="h7">H-7</option>
+                        <option value="notDue">Belum perlu dihubungi</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table class="reminder-table">
+                        <thead><tr><th>Customer</th><th>Motor</th><th>No. WA</th><th>No. Polisi</th><th>Next Service</th><th>Status</th><th>Aksi</th></tr></thead>
+                        <tbody id="followupList"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             LOG PESAN
+        ========================== -->
+        <section id="log" class="page">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h2>📋 Log Pesan</h2>
+
+                    <p>
+                        Riwayat aktivitas campaign WhatsApp
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="section-card">
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Tanggal</th>
+                                <th>Customer</th>
+                                <th>Campaign</th>
+                                <th>Status</th>
+                                <th>Follow-up</th>
+                                <th>Ubah Status</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="messageLog">
+
+                            <tr>
+
+                                <td
+                                    colspan="6"
+                                    class="empty-table">
+
+                                    Belum ada log pesan
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- JAVASCRIPT -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+
+</body>
+</html>
